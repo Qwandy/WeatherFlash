@@ -9,7 +9,7 @@ WeatherFlash is a GUI-based application that allows a user to input a location a
 3. Turn the python file into an executable.
 
 ## Example
-![Example](https://imgur.com/a/hfkSj0w)
+![Example](meteor_dashboard/WeatherFlash_example.png)
 
 ## Usage
 1. Use Git Clone in your CLI to clone the repository or download the repo as a zip file and extract it.
