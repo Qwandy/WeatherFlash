@@ -7,6 +7,8 @@ WeatherFlash is a GUI-based application that allows a user to input a location a
 1. Create an input box for the location so that the user doesn't need to interact with the CLI at all.
 2. Make a "Random location" button for X amount of the most populous cities in the world.
 3. Turn the python file into an executable.
+4. Add a weekly weather forecast for input location
+5. Add a weekly temperature graph if compatible with Tkinter.
 
 ## Usage
 1. Use Git Clone in your CLI to clone the repository or download the repo as a zip file and extract it.
