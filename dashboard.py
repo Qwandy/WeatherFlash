@@ -11,11 +11,16 @@ load_dotenv()
 url = 'https://api.openweathermap.org/data/2.5/weather'
 key = os.getenv("API_KEY")
 
-city = str(input("Please enter a city: "))
+# api details (put key into secret file before pushing to git)
+url = 'https://api.openweathermap.org/data/2.5/weather'
+
+city = str(input("Enter a city: "))
+
+
 
 def fetch_info(location):
-    ''' Uses OpenWeather API to obtain weather information for a city. '''
-    request_url = f"{url}?appid={key}&q={location}"
+
+    request_url = f"{url}?appid={key}&q={city}"
     response = requests.get(request_url)
 
     if response.status_code == 200:
@@ -33,7 +38,7 @@ def fetch_info(location):
 
 # tkinter display
 def gui():
-    ''' Displays information obtained from OpenWeather API through a Tkinter GUI. '''
+
     # function call to fetch data I want to display
     weather, temp, humidity, wind = fetch_info("Didcot")
 
