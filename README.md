@@ -8,6 +8,9 @@ WeatherFlash is a GUI-based application that allows a user to input a location a
 2. Make a "Random location" button for X amount of the most populous cities in the world.
 3. Turn the python file into an executable.
 
+## Example
+![](https://imgur.com/a/hfkSj0w)
+
 ## Usage
 1. Use Git Clone in your CLI to clone the repository or download the repo as a zip file and extract it.
 2. Go to OpenWeatherMap.com and register to obtain your API Key. Copy it.
