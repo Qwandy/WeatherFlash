@@ -5,6 +5,8 @@ import requests
 import os
 from dotenv import load_dotenv
 from tkinter import messagebox
+from bs4 import BeautifulSoup as bs
+import random
 
 load_dotenv()
 
@@ -19,16 +21,18 @@ dict_weather = {
 }
 
 class gui():
-    
+    ''' The base class for running the Tkinter based GUI for OpenWeatherMap API. '''
     def __init__(self):
         self.state = 0
         self.weather = None
         self.temp = None 
         self.humidity = None 
         self.wind = None
+        self.rand = None
+        self.city = None
 
     def _fetch_info(self, location):
-
+        ''' Background method for making the api call. '''
         # api details 
         url = 'https://api.openweathermap.org/data/2.5/weather'
         key = os.getenv("API_KEY")
@@ -47,15 +51,43 @@ class gui():
             print("Error", response.status_code)
         return data_weather, data_main_temp, data_main_humidity, data_wind
     
-    def submit_location(self):
+    def _submit_location(self):
+        ''' Button command for submitting location. '''
         loc = self.location_textbox.get()
         self.weather, self.temp, self.humidity, self.wind = self._fetch_info(loc)
         self.state = 1
         self.run_gui()
-        
+    
+    def _scrape_cities(self):
+        ''' Internal method scraping the most populous cities in the world and returning a list. '''
+        cities_list = []
+
+        cities_url = "https://worldpopulationreview.com/cities" # base url
+        page = requests.get(cities_url) # call to the website
+        soup = bs(page.content, 'html.parser') # making soup
+        table = soup.find('table') # scraping the table element
+        for i, row in enumerate(table.find_all('tr')): # scraping table row
+            row = str(row) # turning into string
+            row_split = row.split("href",1) # splitting on element to find actual city name
+            for k in range(len(row_split)): # using logic on which row contains the city
+                if k == 1:
+                    row_split2 = str(row_split).split("/") # further splitting
+                    row_split3 = str(row_split2[7]).split(">")[1].split("<")[0] # further splitting: BINGO
+                    cities_list.append(row_split3)
+        return cities_list
+
+    def _city_rand(self):
+        ''' Internal method getting a random city from the internal scrape cities method. '''
+        city_list = self._scrape_cities()
+        loc = random.choice(city_list)
+        self.city = loc
+        self.rand = True
+        self.weather, self.temp, self.humidity, self.wind = self._fetch_info(loc)
+        self.state = 1
+        self.run_gui()
 
     def run_gui(self):
-    
+        ''' The method for creating and running the actual GUI. '''
         root = Tk()
         root.title('Weather Flash')
 
@@ -67,8 +99,11 @@ class gui():
             self.location_textbox = Entry(root)
             self.location_textbox.grid(column=0, row=1, sticky = W)
 
-            location_button = Button(root, text = "Submit", command = self.submit_location)
+            location_button = Button(root, text = "Submit", command = self._submit_location)
             location_button.grid(column = 0, row = 2, sticky = W)
+
+            random_button = Button(root, text = 'Random City', command = self._city_rand)
+            random_button.grid(column = 0, row = 3, sticky = W)
 
             root.mainloop()
         elif self.state == 1:
@@ -82,8 +117,9 @@ class gui():
             # empty row for neatness
             ttk.Label(mainframe, text = " ").grid(column=1, row = 0)
             # location widget
-            ttk.Label(mainframe, text = f"{self.location_textbox.get()}", font = ("Helvetica", 16)).grid(column=1, row = 1)
-
+            ttk.Label(mainframe, text = f"{self.location_textbox.get()}", font = ("Helvetica", 16, "underline")).grid(column=1, row = 1)
+            if self.rand == True:
+                ttk.Label(mainframe, text = f"{self.city}", font = ("Helvetica", 16, "underline")).grid(column=1, row = 1)
             # Weather widget
             ttk.Label(mainframe, text = f"The weather is currently: {self.weather}").grid(column=1, row=2, sticky=W)
             image = Image.open(dict_weather[self.weather]).resize((30,30))
@@ -121,7 +157,7 @@ class gui():
 
 
 test = gui().run_gui()
-
+#test = gui()._city_rand()
 
 
 
